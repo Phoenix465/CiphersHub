@@ -1,0 +1,178 @@
+@font-face {
+    font-family: Cyberbit;
+    src: url('fonts/Cyberbit.ttf');
+}
+
+@font-face {
+    font-family: Aller_Bd;
+    src: url('fonts/Aller_Bd.ttf');
+}
+
+@font-face {
+    font-family: Aller_BdIt;
+    src: url('fonts/Aller_BdIt.ttf');
+}
+
+@font-face {
+    font-family: Aller_lt;
+    src: url('fonts/Aller_lt.ttf');
+}
+
+@font-face {
+    font-family: Aller_Lt;
+    src: url('fonts/Aller_Lt.ttf');
+}
+
+@font-face {
+    font-family: Aller_LtIt;
+    src: url('fonts/Aller_LtIt.ttf');
+}
+
+@font-face {
+    font-family: Aller_Rg;
+    src: url('fonts/Aller_Rg.ttf');
+}
+
+@font-face {
+    font-family: AllerDisplay;
+    src: url('fonts/AllerDisplay.ttf');
+}
+
+@font-face {
+    font-family: RobotoRegular;
+    src: url('fonts/Roboto-Regular.ttf');
+}
+
+@font-face {
+    font-family: RobotoMonoRegular;
+    src: url('fonts/RobotoMono-Regular.ttf');
+}
+
+:root {
+    --background-color: #2a3338;
+}
+
+body {
+    background-color: #121212;
+    font-family: RobotoRegular;
+    color: #FFFFFF;
+}
+
+.InputBox {
+    display: flex;
+    flex-direction: column;
+
+    width: 80%;
+    background-color: #333333;
+
+    border-radius: 10px;
+    justify-content: center;
+    align-content: center;
+
+    margin-bottom: 20px;
+}
+
+.CipherTitle {
+    font-size: 3em;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bolder;
+}
+
+.CipherMiniTitle {
+    font-size: 2em;
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+.ValueBlock {
+    font-family: RobotoRegular;
+    font-size: 1.5em;
+
+    display: inline-block;
+    justify-content: center;
+
+    padding: 10px;
+    border-radius: 10px;
+
+    margin: 10px auto;
+
+    background-color: var(--background-color);
+}
+
+
+.ValueInfo {
+    font-family: RobotoRegular;
+    font-size: 0.75em;
+    background-color: var(--background-color);
+
+    padding: 5px;
+    border-radius: 10px;
+
+    margin: 2px auto;
+}
+
+
+.TextInput {
+    width: 90%;
+    background-color: #555555;
+    color: white;
+    margin-top: 20px;
+    margin-left: 5%;
+    margin-bottom: 20px;
+    outline: none;
+    font-size: 1em;
+    font-family: RobotoMonoRegular;
+    border-radius: 10px;
+
+    resize: none;
+    overflow: hidden;
+}
+
+#RunCiphers {
+    width: 30%;
+    height: 5%;
+    font-size: 1.25em;
+    font-family: RobotoMonoRegular;
+    margin-left: 35%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    outline: none;
+    border: none;
+}
+
+#IOCValue {
+    display:inline-block;
+}
+
+#Table {
+    font-family: RobotoMonoRegular;
+    border-radius: 10px;
+    /*border-collapse: collapse;*/
+    width: 90%;
+
+    /*display: flex;*/
+    /*align-items: baseline;*/
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding-top: 10px;
+}
+
+#Table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    text-align: center;
+    background-color: #2a3338;
+    color: white;
+
+    border-bottom: solid 1px rgb(61, 68, 73);
+
+    margin-left: auto;
+    margin-right: auto;
+
+    border-spacing: 0;
+}

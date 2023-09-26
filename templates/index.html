@@ -1,0 +1,75 @@
+<html>
+<head>
+	<title>Ciphers HUD</title>
+    <link rel="stylesheet" href="/static/style.css"/>
+</head>
+
+<body>
+	<h1 class="CipherTitle">Ciphers HUB</h1>
+	<div class="InputBox">
+		<div class="CipherTitle">Cipher Text</div> 
+		<textarea type="text" id="CipherTextInput" class="TextInput" oninput="autoGrowTextArea(this)"></textarea>
+		<button id="RunCiphers" onclick="compute()">COMPUTE</button>
+	</div>
+	<div class="InputBox">
+		<div class="CipherTitle">Statistics</div>
+		<div class="CipherMiniTitle">Frequency Analysis</div>
+		<div id="FrequencyAnalysis"></div>
+		<table id="Table">
+			<tr id="FrequencyLetters">
+			</tr>
+			<tr id="FrequencyValue">
+			</tr>
+			<tr id="FrequencyPercentage">
+			</tr>
+		</table>
+
+		<div class="CipherMiniTitle">Index of Coincidence</div>
+		<div class="ValueBlock">
+			<div>
+				IOC = <div id="IOCValue"></div>
+			</div>
+		</div>
+
+		<div class="ValueInfo">
+			~0.0700 (Transposition Cipher)
+			<br>
+			~0.0385 (Polyalphabetic Cipher)
+		</div>
+	</div>
+
+	<div class="InputBox">
+		<div class="CipherTitle">Ciphers</div>
+		<div class="CipherMiniTitle">Atbash</div>
+		<textarea type="text" id="AtbashPT" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
+		<div class="ValueBlock">
+			<div id="AtbashInfo"></div>
+		</div>
+
+		<div class="CipherMiniTitle">Ceaser</div>
+		<div id="CeaserOutputs">
+		</div>
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+	<template id="FrequencyLetterTemplate">
+		<th>--</th>
+	</template>
+
+	<template id="FrequencyNumberTemplate">
+		<th>--</th>
+	</template>
+
+	<template id="CeaserOutputTemplate">
+		<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
+		<div class="ValueBlock">
+			<div class="CeaserInfo">
+
+			</div>
+		</div>
+	</template>
+
+	<script src="/static/main.js"></script>
+
+</body>
+</html> 
