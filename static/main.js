@@ -19,7 +19,13 @@ const AtbashPT = document.getElementById("AtbashPT");
 const AtbashInfo = document.getElementById("AtbashInfo");
 
 const CeaserOutputs = document.getElementById("CeaserOutputs");
+const VigenereOutputs = document.getElementById("VigenereOutputs");
 
+const FrequencyAnalysisStatus = document.getElementById("FrequencyAnalysisStatus")
+const IOCStatus = document.getElementById("IOCStatus")
+const AtbashStatus = document.getElementById("AtbashStatus")
+const CeaserStatus = document.getElementById("CeaserStatus")
+const VigenereStatus = document.getElementById("VigenereStatus")
 
 const topResultsNumber = 5;
 
@@ -35,14 +41,49 @@ function round(num, digits) {
     return Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
 }
 
+function setStatus(element, isBusy) {
+    if (isBusy === true) {
+        element.innerText = "BUSY"
+        element.classList.add("red")
+        element.classList.remove("green")
+    } else {
+        element.innerText = "READY"
+        element.classList.add("green")
+        element.classList.remove("red")
+    }
+
+
+}
+
+function reset() {
+    applyFrequencyAnalysis(
+    ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
+    {"A":0,"B":0,"C":0,"D":0,"E":0,"F":0,"G":0,"H":0,"I":0,"J":0,"K":0,"L":0,"M":0,"N":0,"O":0,"P":0,"Q":0,"R":0,"S":0,"T":0,"U":0,"V":0,"W":0,"X":0,"Y":0,"Z":0}
+    );
+    applyIOC(0);
+    applyAtbash("", 0, "NA");
+    CeaserOutputs.innerHTML = "";
+    applyCeaser("", "NA", "NA", "Fitness");
+    VigenereOutputs.innerHTML = "";
+    applyVigenere("", "NA", "NA", "Fitness");
+}
+
 function compute() {
     const text = cipherTextElement.value;
+
+    reset()
+
+    setStatus(FrequencyAnalysisStatus, true);
+    setStatus(IOCStatus, true);
+    setStatus(AtbashStatus, true);
+    setStatus(CeaserStatus, true);
+    setStatus(VigenereStatus, true);
 
     socket.emit("requestFrequencyAnalysis", {ctext: text});
     socket.emit("requestIOC", {ctext: text});
     socket.emit("requestAtbash", {ctext: text});
     socket.emit("requestCeaser", {ctext: text});
-
+    socket.emit("requestVigenere", {ctext: text});
 }
 function applyFrequencyAnalysis(keysSort, frequency) {
     frequencyLetters.innerHTML = ""
@@ -68,21 +109,27 @@ function applyFrequencyAnalysis(keysSort, frequency) {
         frequencyValue.insertAdjacentHTML("beforeend", frequencyClone);
         frequencyPercentage.insertAdjacentHTML("beforeend", percentageClone);
     }
+
+    setStatus(FrequencyAnalysisStatus, false);
 }
 
 function applyIOC(ioc) {
     IOCValue.innerText = `${round(ioc, 6)}`
+
+    setStatus(IOCStatus, false);
 }
 
 function applyAtbash(text, fitness, fitnessName) {
     AtbashPT.value = text;
     AtbashInfo.innerText = `${fitnessName}: ${round(fitness, 6)}`
     autoGrowTextArea(AtbashPT);
+
+    setStatus(AtbashStatus, false);
 }
 
 function applyCeaser(text, shift, fitness, fitnessName) {
     let ceaserOutput = ceaserOutputTemplate.content.cloneNode(true);
-    let ceaserPT = ceaserOutput.querySelector(".TextInput");
+    let ceaserPT = ceaserOutput.querySelector(".TextInputSmall");
     ceaserPT.value = text;
 
     let ceaserInfo = ceaserOutput.querySelector(".CeaserInfo");
@@ -90,6 +137,22 @@ function applyCeaser(text, shift, fitness, fitnessName) {
     ceaserInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Shift: ${shift}`;
     CeaserOutputs.appendChild(ceaserOutput);
     autoGrowTextArea(ceaserPT);
+
+    setStatus(CeaserStatus, false);
+}
+
+function applyVigenere(text, key, fitness, fitnessName) {
+    let vigenereOutput = ceaserOutputTemplate.content.cloneNode(true);
+    let vigenerePT = vigenereOutput.querySelector(".TextInputSmall");
+    vigenerePT.value = text;
+
+    let vigenereInfo = vigenereOutput.querySelector(".CeaserInfo");
+
+    vigenereInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Key: ${key}`;
+    VigenereOutputs.appendChild(vigenereOutput);
+    autoGrowTextArea(vigenerePT);
+
+    setStatus(VigenereStatus, false);
 }
 
 socket.on("result", function (data) {
@@ -127,11 +190,16 @@ socket.on("result", function (data) {
             applyCeaser(text, shift, fitness, data["fitnessName"]);
         }
     }
+    else if (resultType === "Vigenere") {
+        VigenereOutputs.innerHTML = "";
+        for(let i = 0; i < result.length; i++) {
+            const fitness = result[i]["fitness"];
+            const text = result[i]["text"];
+            const key = result[i]["metadata"]["key"];
+
+            applyVigenere(text, key, fitness, data["fitnessName"]);
+        }
+    }
 })
 
-applyFrequencyAnalysis(
-    ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
-    {"A":0,"B":0,"C":0,"D":0,"E":0,"F":0,"G":0,"H":0,"I":0,"J":0,"K":0,"L":0,"M":0,"N":0,"O":0,"P":0,"Q":0,"R":0,"S":0,"T":0,"U":0,"V":0,"W":0,"X":0,"Y":0,"Z":0}
-);
-applyIOC(0);
-applyAtbash("", 0, "NA");
+reset();

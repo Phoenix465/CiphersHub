@@ -1,3 +1,18 @@
+def profile(func):
+    from functools import wraps
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        from line_profiler import LineProfiler
+        prof = LineProfiler()
+        try:
+            return prof(func)(*args, **kwargs)
+        finally:
+            prof.print_stats()
+
+    return wrapper
+
+
 class CiphertextFitnessTracker:
     def __init__(self, fitnessFunc, resultsTrack: int = 1):
         self.fitnessFunc = fitnessFunc
@@ -32,5 +47,3 @@ class CiphertextFitnessTracker:
     def get(self):
         fitnessIndexSorted = sorted(range(len(self.fitnesses)), key=lambda i: self.fitnesses[i], reverse=True)
         return [{"fitness": self.fitnesses[fitIndex], "text": self.texts[fitIndex], "metadata": self.metaData[fitIndex]} for fitIndex in fitnessIndexSorted]
-
-

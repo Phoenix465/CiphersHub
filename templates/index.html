@@ -13,7 +13,10 @@
 	</div>
 	<div class="InputBox">
 		<div class="CipherTitle">Statistics</div>
-		<div class="CipherMiniTitle">Frequency Analysis</div>
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Frequency Analysis</div>
+			<div class="CipherStatusInfo" id="FrequencyAnalysisStatus">READY</div>
+		</div>
 		<div id="FrequencyAnalysis"></div>
 		<table id="Table">
 			<tr id="FrequencyLetters">
@@ -24,7 +27,10 @@
 			</tr>
 		</table>
 
-		<div class="CipherMiniTitle">Index of Coincidence</div>
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Index of Coincidence</div>
+			<div class="CipherStatusInfo" id="IOCStatus">READY</div>
+		</div>
 		<div class="ValueBlock">
 			<div>
 				IOC = <div id="IOCValue"></div>
@@ -40,14 +46,45 @@
 
 	<div class="InputBox">
 		<div class="CipherTitle">Ciphers</div>
-		<div class="CipherMiniTitle">Atbash</div>
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Atbash</div>
+			<div class="CipherStatusInfo" id="AtbashStatus">READY</div>
+		</div>
 		<textarea type="text" id="AtbashPT" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
 		<div class="ValueBlock">
 			<div id="AtbashInfo"></div>
 		</div>
 
-		<div class="CipherMiniTitle">Ceaser</div>
-		<div id="CeaserOutputs">
+		 <div class="dotted-line"></div>
+
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Ceaser</div>
+			<div class="CipherStatusInfo" id="CeaserStatus">READY</div>
+		</div>
+		<div id="CeaserOutputs" class="ParentInherit">
+			<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
+			<div class="ValueBlockSmall">
+				<div class="CeaserInfo">
+					NA: 0
+				</div>
+			</div>
+		</div>
+
+
+		 <div class="dotted-line"></div>
+
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Vigenere</div>
+			<div class="CipherStatusInfo" id="VigenereStatus">READY</div>
+		</div>
+
+		<div id="VigenereOutputs" class="ParentInherit">
+			<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
+			<div class="ValueBlockSmall">
+				<div class="VigenereInfo">
+					NA: 0 | Key: NA
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -61,8 +98,8 @@
 	</template>
 
 	<template id="CeaserOutputTemplate">
-		<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
-		<div class="ValueBlock">
+		<textarea type="text" class="TextInputSmall" readonly oninput="autoGrowTextArea(this)"></textarea>
+		<div class="ValueBlockSmall">
 			<div class="CeaserInfo">
 
 			</div>

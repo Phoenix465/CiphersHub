@@ -1,5 +1,6 @@
 from utils import CiphertextFitnessTracker
 
+
 alphas = "abcdefghijklmnopqrstuvwxyz".upper()
 reverseSubstitute = {a: b for a, b in zip(alphas, alphas[::-1])}
 alpha2Nums = {letter: i for i, letter in enumerate(alphas)}
@@ -41,5 +42,30 @@ def CeaserSolver(text, fitnessFunc, num=1):
     for i in range(26):
         ctext = CeaserShift(text, -i)
         tracker.add(ctext, metaData={"shift": i})
+
+    return tracker.get()
+
+
+def VigenereSolver(text, fitnessFunc, num=1):
+    tracker = CiphertextFitnessTracker(fitnessFunc=fitnessFunc, resultsTrack=num)
+
+    filterText = "".join([Character for Character in text.upper() if Character in alphas])
+
+    for keyLength in range(1, 15):
+        key = ""
+
+        columns = []
+
+        for i in range(keyLength):
+            column = filterText[i::keyLength]
+            result = CeaserSolver("".join(column), fitnessFunc, num=1)
+
+            key += alphas[result[0]["metadata"]["shift"]]
+            text = result[0]["text"]
+
+            columns.append(text)
+
+        plaintext = "".join([row[i] for i in range(len(columns[0])) for row in columns if i < len(row)])
+        tracker.add(plaintext, metaData={"key": key})
 
     return tracker.get()

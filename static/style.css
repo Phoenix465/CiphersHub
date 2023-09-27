@@ -79,12 +79,47 @@ body {
     font-weight: bolder;
 }
 
+.CipherStatusHolder {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 .CipherMiniTitle {
+    display: flex;
+    position: relative;
+
     font-size: 2em;
     text-align: center;
     margin-top: 20px;
 }
 
+.CipherStatusInfo {
+    font-family: RobotoMonoRegular;
+
+    display: flex;
+    font-size: 1.5em;
+
+    margin-top: 20px;
+    padding: 5px;
+    border-radius: 5px;
+
+    position: absolute;
+    top: 0;
+    right: 20px;
+}
+
+.red {
+    background-color: #F23F43;
+}
+
+.green {
+    background-color: #23A55A;
+}
 
 .ValueBlock {
     font-family: RobotoRegular;
@@ -101,6 +136,21 @@ body {
     background-color: var(--background-color);
 }
 
+.ValueBlockSmall {
+    font-family: RobotoRegular;
+    font-size: 1em;
+
+    display: inline-block;
+    justify-content: center;
+
+    padding: 10px;
+    border-radius: 10px;
+
+    margin: 0px auto;
+
+    background-color: var(--background-color);
+}
+
 
 .ValueInfo {
     font-family: RobotoRegular;
@@ -112,7 +162,6 @@ body {
 
     margin: 2px auto;
 }
-
 
 .TextInput {
     width: 90%;
@@ -130,6 +179,36 @@ body {
     overflow: hidden;
 }
 
+.TextInputSmall {
+    width: 90%;
+    background-color: #555555;
+    color: white;
+    margin-top: 20px;
+    margin-left: 5%;
+    /*margin-bottom: 20px;*/
+    outline: none;
+    font-size: 1em;
+    font-family: RobotoMonoRegular;
+    border-radius: 10px;
+
+    resize: none;
+    overflow: hidden;
+}
+
+.dotted-line {
+    background-color: transparent;
+    border-top: 3px dashed #AAAAAA;
+    height: 3px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ParentInherit {
+    display: flex;
+    flex-direction: column;
+}
+
 #RunCiphers {
     width: 30%;
     height: 5%;
@@ -143,7 +222,7 @@ body {
 }
 
 #IOCValue {
-    display:inline-block;
+    display: inline-block;
 }
 
 #Table {

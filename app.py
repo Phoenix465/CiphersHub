@@ -6,7 +6,6 @@ from os import path, walk
 import analysis
 import cryptography
 
-
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -76,9 +75,23 @@ def requestAtbash(data):
     if "ctext" in data:
         text = data["ctext"]
         results = cryptography.CeaserSolver(text, fitnessFunc=fitnessFunc, num=5)
-        print(results)
+
         emit("result", {
             "type": "Ceaser",
+            "result": results,
+            "fitnessName": fitnessFuncName,
+        })
+
+
+@socketio.on("requestVigenere")
+def requestVigenere(data):
+    if "ctext" in data:
+        text = data["ctext"]
+
+        results = cryptography.VigenereSolver(text, fitnessFunc=fitnessFunc, num=5)
+
+        emit("result", {
+            "type": "Vigenere",
             "result": results,
             "fitnessName": fitnessFuncName,
         })
