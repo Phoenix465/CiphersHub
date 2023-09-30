@@ -23,8 +23,8 @@ class CiphertextFitnessTracker:
         self.metaData = []
         self.minFitness = None
 
-    def add(self, text, metaData=None):
-        fitness = self.fitnessFunc(text)
+    def add(self, text, fitnessOverride=None, metaData=None):
+        fitness = fitnessOverride or self.fitnessFunc(text)
 
         if self.minFitness is None or len(self.fitnesses) < self.resultsTrack:
             self.fitnesses.append(fitness)
