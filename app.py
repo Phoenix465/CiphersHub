@@ -5,14 +5,15 @@ from os import path, walk
 
 import analysis
 import cryptography
+import ngram_score
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 socketio = SocketIO(app)
 
-fitnessFuncName = "PMCC Bigrams"
-fitnessFunc = analysis.pmcc_b
+fitnessFuncName = "Quadgrams Log"
+fitnessFunc = ngram_score.ngram_score("english_quadgrams.txt").score
 
 
 @app.route("/")
@@ -97,6 +98,53 @@ def requestVigenere(data):
         })
 
 
+@socketio.on("requestAffine")
+def requestAffine(data):
+    if "ctext" in data:
+        text = data["ctext"]
+
+        if len(text) <=2:
+            emit("result", {
+                "type": "Affine",
+                "result": [],
+                "fitnessName": fitnessFuncName,
+            })
+
+        results = cryptography.AffineSolver(text, fitnessFunc=fitnessFunc, num=5)
+
+        emit("result", {
+            "type": "Affine",
+            "result": results,
+            "fitnessName": fitnessFuncName,
+        })
+
+
+@socketio.on("requestSubstitution")
+def requestSubstitution(data):
+    if "ctext" in data:
+        text = data["ctext"]
+
+        results = cryptography.SubstitutionSolver(text, fitnessFunc=fitnessFunc, num=5)
+
+        emit("result", {
+            "type": "Substitution",
+            "result": results,
+            "fitnessName": fitnessFuncName,
+        })
+
+
+@socketio.on("requestRailFence")
+def requestRailFence(data):
+    if "ctext" in data:
+        text = data["ctext"]
+        results = cryptography.RailFenceSolver(text, fitnessFunc=fitnessFunc, num=5)
+
+        emit("result", {
+            "type": "RailFence",
+            "result": results,
+            "fitnessName": fitnessFuncName,
+        })
+
 
 if __name__ == "__main__":
     extraDirs = [r'.\static', r'.\templates']
@@ -110,3 +158,4 @@ if __name__ == "__main__":
     print(extraFiles)
 
     socketio.run(app=app, debug=True, use_reloader=True, allow_unsafe_werkzeug=True, extra_files=extraFiles)
+    # socketio.run(host="0.0.0.0", app=app, debug=True, use_reloader=True, allow_unsafe_werkzeug=True, extra_files=extraFiles)

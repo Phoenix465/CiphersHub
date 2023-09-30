@@ -113,6 +113,32 @@ body {
     right: 20px;
 }
 
+.CipherExpand {
+    font-family: RobotoMonoRegular;
+
+    display: flex;
+    font-size: 2em;
+
+    margin-top: 20px;
+    padding: 5px;
+    border-radius: 5px;
+
+    position: absolute;
+    top: 0;
+    left: 20px;
+
+    background-color: #F7BD02;
+    width: 0.8em;
+    height: 0.8em;
+
+    justify-content: center;
+    align-items: center;
+
+    outline: none;
+    border: none;
+    color: white;
+}
+
 .red {
     background-color: #F23F43;
 }
@@ -200,13 +226,21 @@ body {
     border-top: 3px dashed #AAAAAA;
     height: 3px;
     width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+
+    margin: 20px auto;
 }
 
 .ParentInherit {
     display: flex;
     flex-direction: column;
+}
+
+textarea.HideExtraSiblings:nth-of-type(n+2) {
+    display: none;
+}
+
+div.HideExtraSiblings:nth-of-type(n+2) {
+    display: none;
 }
 
 #RunCiphers {

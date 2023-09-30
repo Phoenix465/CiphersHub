@@ -20,12 +20,18 @@ const AtbashInfo = document.getElementById("AtbashInfo");
 
 const CeaserOutputs = document.getElementById("CeaserOutputs");
 const VigenereOutputs = document.getElementById("VigenereOutputs");
+const AffineOutputs = document.getElementById("AffineOutputs");
+const SubstitutionOutputs = document.getElementById("SubstitutionOutputs");
+const RailFenceOutputs = document.getElementById("RailFenceOutputs");
 
 const FrequencyAnalysisStatus = document.getElementById("FrequencyAnalysisStatus")
 const IOCStatus = document.getElementById("IOCStatus")
 const AtbashStatus = document.getElementById("AtbashStatus")
 const CeaserStatus = document.getElementById("CeaserStatus")
 const VigenereStatus = document.getElementById("VigenereStatus")
+const AffineStatus = document.getElementById("AffineStatus")
+const SubstitutionStatus = document.getElementById("SubstitutionStatus")
+const RailFenceStatus = document.getElementById("RailFenceStatus")
 
 const topResultsNumber = 5;
 
@@ -51,8 +57,6 @@ function setStatus(element, isBusy) {
         element.classList.add("green")
         element.classList.remove("red")
     }
-
-
 }
 
 function reset() {
@@ -61,11 +65,23 @@ function reset() {
     {"A":0,"B":0,"C":0,"D":0,"E":0,"F":0,"G":0,"H":0,"I":0,"J":0,"K":0,"L":0,"M":0,"N":0,"O":0,"P":0,"Q":0,"R":0,"S":0,"T":0,"U":0,"V":0,"W":0,"X":0,"Y":0,"Z":0}
     );
     applyIOC(0);
-    applyAtbash("", 0, "NA");
+
+    applyAtbash("", 0, "Fitness");
+
     CeaserOutputs.innerHTML = "";
     applyCeaser("", "NA", "NA", "Fitness");
+
     VigenereOutputs.innerHTML = "";
     applyVigenere("", "NA", "NA", "Fitness");
+
+    AffineOutputs.innerHTML = "";
+    applyAffine("", "NA", "NA", "NA", "Fitness");
+
+    SubstitutionOutputs.innerHTML = "";
+    applySubstitution("", "NA", "NA", "Fitness");
+
+    RailFenceOutputs.innerHTML = "";
+    applyRailFence("", "NA", "NA", "Fitness");
 }
 
 function compute() {
@@ -78,12 +94,18 @@ function compute() {
     setStatus(AtbashStatus, true);
     setStatus(CeaserStatus, true);
     setStatus(VigenereStatus, true);
+    setStatus(AffineStatus, true);
+    setStatus(SubstitutionStatus, true);
+    setStatus(RailFenceStatus, true);
 
     socket.emit("requestFrequencyAnalysis", {ctext: text});
     socket.emit("requestIOC", {ctext: text});
     socket.emit("requestAtbash", {ctext: text});
     socket.emit("requestCeaser", {ctext: text});
     socket.emit("requestVigenere", {ctext: text});
+    socket.emit("requestAffine", {ctext: text});
+    socket.emit("requestSubstitution", {ctext: text});
+    socket.emit("requestRailFence", {ctext: text});
 }
 function applyFrequencyAnalysis(keysSort, frequency) {
     frequencyLetters.innerHTML = ""
@@ -129,6 +151,7 @@ function applyAtbash(text, fitness, fitnessName) {
 
 function applyCeaser(text, shift, fitness, fitnessName) {
     let ceaserOutput = ceaserOutputTemplate.content.cloneNode(true);
+
     let ceaserPT = ceaserOutput.querySelector(".TextInputSmall");
     ceaserPT.value = text;
 
@@ -137,6 +160,12 @@ function applyCeaser(text, shift, fitness, fitnessName) {
     ceaserInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Shift: ${shift}`;
     CeaserOutputs.appendChild(ceaserOutput);
     autoGrowTextArea(ceaserPT);
+
+    if (CeaserOutputs.dataset.hide === "true") {
+        ceaserPT.classList.add("HideExtraSiblings")
+        let lastChild = CeaserOutputs.lastElementChild;
+        lastChild.classList.add("HideExtraSiblings")
+    }
 
     setStatus(CeaserStatus, false);
 }
@@ -152,8 +181,79 @@ function applyVigenere(text, key, fitness, fitnessName) {
     VigenereOutputs.appendChild(vigenereOutput);
     autoGrowTextArea(vigenerePT);
 
+    if (VigenereOutputs.dataset.hide === "true") {
+        vigenerePT.classList.add("HideExtraSiblings")
+        let lastChild = VigenereOutputs.lastElementChild;
+        lastChild.classList.add("HideExtraSiblings")
+    }
+
+
     setStatus(VigenereStatus, false);
 }
+
+
+function applyAffine(text, a, b, fitness, fitnessName) {
+    let affineOutput = ceaserOutputTemplate.content.cloneNode(true);
+    let affinePT = affineOutput.querySelector(".TextInputSmall");
+    affinePT.value = text;
+
+    let affineInfo = affineOutput.querySelector(".CeaserInfo");
+
+    affineInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>A: ${a} | B: ${b}`;
+    AffineOutputs.appendChild(affineOutput);
+    autoGrowTextArea(affinePT);
+
+    if (AffineOutputs.dataset.hide === "true") {
+        affinePT.classList.add("HideExtraSiblings")
+        let lastChild = AffineOutputs.lastElementChild;
+        lastChild.classList.add("HideExtraSiblings")
+    }
+
+    setStatus(AffineStatus, false);
+}
+
+
+function applySubstitution(text, key, fitness, fitnessName) {
+    let substitutionOutput = ceaserOutputTemplate.content.cloneNode(true);
+    let substitutionPT = substitutionOutput.querySelector(".TextInputSmall");
+    substitutionPT.value = text;
+
+    let substitutionInfo = substitutionOutput.querySelector(".CeaserInfo");
+
+    substitutionInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Key: ${key}`;
+    SubstitutionOutputs.appendChild(substitutionOutput);
+    autoGrowTextArea(substitutionPT);
+
+    if (SubstitutionOutputs.dataset.hide === "true") {
+        substitutionPT.classList.add("HideExtraSiblings")
+        let lastChild = SubstitutionOutputs.lastElementChild;
+        lastChild.classList.add("HideExtraSiblings")
+    }
+
+    setStatus(SubstitutionStatus, false);
+}
+
+
+function applyRailFence(text, rails, fitness, fitnessName) {
+    let railFenceOutput = ceaserOutputTemplate.content.cloneNode(true);
+    let railFencePT = railFenceOutput.querySelector(".TextInputSmall");
+    railFencePT.value = text;
+
+    let railFenceInfo = railFenceOutput.querySelector(".CeaserInfo");
+
+    railFenceInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Rails: ${rails}`;
+    RailFenceOutputs.appendChild(railFenceOutput);
+    autoGrowTextArea(railFencePT);
+
+    if (RailFenceOutputs.dataset.hide === "true") {
+        railFencePT.classList.add("HideExtraSiblings")
+        let lastChild = RailFenceOutputs.lastElementChild;
+        lastChild.classList.add("HideExtraSiblings")
+    }
+
+    setStatus(RailFenceStatus, false);
+}
+
 
 socket.on("result", function (data) {
     const resultType = data.type;
@@ -200,6 +300,56 @@ socket.on("result", function (data) {
             applyVigenere(text, key, fitness, data["fitnessName"]);
         }
     }
+    else if (resultType === "Affine") {
+        AffineOutputs.innerHTML = "";
+        for(let i = 0; i < result.length; i++) {
+            const fitness = result[i]["fitness"];
+            const text = result[i]["text"];
+            const a = result[i]["metadata"]["a"];
+            const b = result[i]["metadata"]["b"];
+
+            applyAffine(text, a, b, fitness, data["fitnessName"]);
+        }
+    }
+    else if (resultType === "Substitution") {
+        SubstitutionOutputs.innerHTML = "";
+        for(let i = 0; i < result.length; i++) {
+            const fitness = result[i]["fitness"];
+            const text = result[i]["text"];
+            const key = result[i]["metadata"]["key"];
+
+            applySubstitution(text, key, fitness, data["fitnessName"]);
+        }
+    }
+    else if (resultType === "RailFence") {
+        RailFenceOutputs.innerHTML = "";
+        for(let i = 0; i < result.length; i++) {
+            const fitness = result[i]["fitness"];
+            const text = result[i]["text"];
+            const rail = result[i]["metadata"]["rail"];
+
+            applyRailFence(text, rail, fitness, data["fitnessName"]);
+        }
+    }
 })
 
+function expandButtonClick(buttonElement, outputId) {
+    let outputElement = document.getElementById(outputId)
+    let hide = outputElement.dataset.hide === "true";
+    outputElement.dataset.hide = hide ? "false" : "true";
+
+    buttonElement.innerText = !hide ? "+" : "-";
+
+    let outputChildren = outputElement.children;
+    for(const child of outputChildren) {
+        if (!hide) {
+            child.classList.add("HideExtraSiblings");
+        } else {
+            child.classList.remove("HideExtraSiblings");
+        }
+    }
+}
+
 reset();
+
+var allExpandButtons = document.querySelectorAll('div[class^=CipherExpand]');

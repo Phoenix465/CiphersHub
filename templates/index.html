@@ -60,8 +60,9 @@
 		<div class="CipherStatusHolder">
 			<div class="CipherMiniTitle">Ceaser</div>
 			<div class="CipherStatusInfo" id="CeaserStatus">READY</div>
+			<button class="CipherExpand" onclick="expandButtonClick(this, 'CeaserOutputs')">+</button>
 		</div>
-		<div id="CeaserOutputs" class="ParentInherit">
+		<div id="CeaserOutputs" class="ParentInherit" data-hide="true">
 			<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
 			<div class="ValueBlockSmall">
 				<div class="CeaserInfo">
@@ -70,15 +71,30 @@
 			</div>
 		</div>
 
+		 <div class="dotted-line"></div>
+
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Affine</div>
+			<div class="CipherStatusInfo" id="AffineStatus">READY</div>
+			<button class="CipherExpand" onclick="expandButtonClick(this, 'AffineOutputs')">+</button>
+		</div>
+		<div id="AffineOutputs" class="ParentInherit" data-hide="true">
+			<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
+			<div class="ValueBlockSmall">
+				<div class="AffineInfo">
+					NA: 0 | A: 0
+				</div>
+			</div>
+		</div>
 
 		 <div class="dotted-line"></div>
 
 		<div class="CipherStatusHolder">
 			<div class="CipherMiniTitle">Vigenere</div>
 			<div class="CipherStatusInfo" id="VigenereStatus">READY</div>
+			<button class="CipherExpand" onclick="expandButtonClick(this, 'VigenereOutputs')">+</button>
 		</div>
-
-		<div id="VigenereOutputs" class="ParentInherit">
+		<div id="VigenereOutputs" class="ParentInherit" data-hide="true">
 			<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
 			<div class="ValueBlockSmall">
 				<div class="VigenereInfo">
@@ -86,6 +102,38 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="dotted-line"></div>
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Substitution</div>
+			<div class="CipherStatusInfo" id="SubstitutionStatus">READY</div>
+			<button class="CipherExpand" onclick="expandButtonClick(this, 'SubstitutionOutputs')">+</button>
+		</div>
+		<div id="SubstitutionOutputs" class="ParentInherit" data-hide="true">
+			<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
+			<div class="ValueBlockSmall">
+				<div class="SubstitutionInfo">
+					NA: 0 | Key: NA
+				</div>
+			</div>
+		</div>
+
+		<div class="dotted-line"></div>
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Rail Fence</div>
+			<div class="CipherStatusInfo" id="RailFenceStatus">READY</div>
+			<button class="CipherExpand" onclick="expandButtonClick(this, 'RailFenceOutputs')">+</button>
+		</div>
+		<div id="RailFenceOutputs" class="ParentInherit" data-hide="true">
+			<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
+			<div class="ValueBlockSmall">
+				<div class="RailFenceInfo">
+					NA: 0 | Rails: NA
+				</div>
+			</div>
+		</div>
+
+		<div class="dotted-line"></div>
 	</div>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
