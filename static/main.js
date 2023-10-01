@@ -7,7 +7,7 @@ const cipherTextElement = document.getElementById("CipherTextInput");
 
 const frequencyLetterTemplate = document.querySelector("#FrequencyLetterTemplate");
 const frequencyNumberTemplate = document.querySelector("#FrequencyNumberTemplate");
-const ceaserOutputTemplate = document.querySelector("#CeaserOutputTemplate");
+const CipherMultipleOutputTemplate = document.querySelector("#CipherMultipleOutputTemplate");
 
 const frequencyLetters = document.getElementById("FrequencyLetters");
 const frequencyValue = document.getElementById("FrequencyValue");
@@ -18,20 +18,7 @@ const IOCValue = document.getElementById("IOCValue");
 const AtbashPT = document.getElementById("AtbashPT");
 const AtbashInfo = document.getElementById("AtbashInfo");
 
-const CeaserOutputs = document.getElementById("CeaserOutputs");
-const VigenereOutputs = document.getElementById("VigenereOutputs");
-const AffineOutputs = document.getElementById("AffineOutputs");
-const SubstitutionOutputs = document.getElementById("SubstitutionOutputs");
-const RailFenceOutputs = document.getElementById("RailFenceOutputs");
-
 const FrequencyAnalysisStatus = document.getElementById("FrequencyAnalysisStatus")
-const IOCStatus = document.getElementById("IOCStatus")
-const AtbashStatus = document.getElementById("AtbashStatus")
-const CeaserStatus = document.getElementById("CeaserStatus")
-const VigenereStatus = document.getElementById("VigenereStatus")
-const AffineStatus = document.getElementById("AffineStatus")
-const SubstitutionStatus = document.getElementById("SubstitutionStatus")
-const RailFenceStatus = document.getElementById("RailFenceStatus")
 
 const topResultsNumber = 5;
 
@@ -47,7 +34,8 @@ function round(num, digits) {
     return Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
 }
 
-function setStatus(element, isBusy) {
+function setStatus(cipherType, isBusy) {
+    let element = document.getElementById(`${cipherType}Status`)
     if (isBusy === true) {
         element.innerText = "BUSY"
         element.classList.add("red")
@@ -59,6 +47,11 @@ function setStatus(element, isBusy) {
     }
 }
 
+function resetOutput(cipherType) {
+    let element = document.getElementById(`${cipherType}Outputs`)
+    element.innerHTML = "";
+}
+
 function reset() {
     applyFrequencyAnalysis(
     ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
@@ -68,20 +61,17 @@ function reset() {
 
     applyAtbash("", 0, "Fitness");
 
-    CeaserOutputs.innerHTML = "";
-    applyCeaser("", "NA", "NA", "Fitness");
+    resetOutput("Ceaser");
+    resetOutput("Vigenere");
+    resetOutput("Affine");
+    resetOutput("Substitution");
+    resetOutput("RailFence");
 
-    VigenereOutputs.innerHTML = "";
-    applyVigenere("", "NA", "NA", "Fitness");
-
-    AffineOutputs.innerHTML = "";
-    applyAffine("", "NA", "NA", "NA", "Fitness");
-
-    SubstitutionOutputs.innerHTML = "";
-    applySubstitution("", "NA", "NA", "Fitness");
-
-    RailFenceOutputs.innerHTML = "";
-    applyRailFence("", "NA", "NA", "Fitness");
+    applyMultipleCiphersOutput("Ceaser", "", [`Fitness: NA`, `Shift: NA`])
+    applyMultipleCiphersOutput("Vigenere", "", [`Fitness: NA`, `Key: NA`])
+    applyMultipleCiphersOutput("Affine", "", [`Fitness: NA`, `A: NA | B: NA`])
+    applyMultipleCiphersOutput("Substitution", "", [`Fitness: NA`, `Key: NA`])
+    applyMultipleCiphersOutput("RailFence", "", [`Fitness: NA`, `Rails: NA`])
 }
 
 function compute() {
@@ -89,14 +79,14 @@ function compute() {
 
     reset()
 
-    setStatus(FrequencyAnalysisStatus, true);
-    setStatus(IOCStatus, true);
-    setStatus(AtbashStatus, true);
-    setStatus(CeaserStatus, true);
-    setStatus(VigenereStatus, true);
-    setStatus(AffineStatus, true);
-    setStatus(SubstitutionStatus, true);
-    setStatus(RailFenceStatus, true);
+    setStatus("FrequencyAnalysis", true);
+    setStatus("IOC", true);
+    setStatus("Atbash", true);
+    setStatus("Ceaser", true);
+    setStatus("Vigenere", true);
+    setStatus("Affine", true);
+    setStatus("Substitution", true);
+    setStatus("RailFence", true);
 
     socket.emit("requestFrequencyAnalysis", {ctext: text});
     socket.emit("requestIOC", {ctext: text});
@@ -132,13 +122,13 @@ function applyFrequencyAnalysis(keysSort, frequency) {
         frequencyPercentage.insertAdjacentHTML("beforeend", percentageClone);
     }
 
-    setStatus(FrequencyAnalysisStatus, false);
+    setStatus("FrequencyAnalysis", false);
 }
 
 function applyIOC(ioc) {
     IOCValue.innerText = `${round(ioc, 6)}`
 
-    setStatus(IOCStatus, false);
+    setStatus("IOC", false);
 }
 
 function applyAtbash(text, fitness, fitnessName) {
@@ -146,112 +136,31 @@ function applyAtbash(text, fitness, fitnessName) {
     AtbashInfo.innerText = `${fitnessName}: ${round(fitness, 6)}`
     autoGrowTextArea(AtbashPT);
 
-    setStatus(AtbashStatus, false);
-}
-
-function applyCeaser(text, shift, fitness, fitnessName) {
-    let ceaserOutput = ceaserOutputTemplate.content.cloneNode(true);
-
-    let ceaserPT = ceaserOutput.querySelector(".TextInputSmall");
-    ceaserPT.value = text;
-
-    let ceaserInfo = ceaserOutput.querySelector(".CeaserInfo");
-
-    ceaserInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Shift: ${shift}`;
-    CeaserOutputs.appendChild(ceaserOutput);
-    autoGrowTextArea(ceaserPT);
-
-    if (CeaserOutputs.dataset.hide === "true") {
-        ceaserPT.classList.add("HideExtraSiblings")
-        let lastChild = CeaserOutputs.lastElementChild;
-        lastChild.classList.add("HideExtraSiblings")
-    }
-
-    setStatus(CeaserStatus, false);
-}
-
-function applyVigenere(text, key, fitness, fitnessName) {
-    let vigenereOutput = ceaserOutputTemplate.content.cloneNode(true);
-    let vigenerePT = vigenereOutput.querySelector(".TextInputSmall");
-    vigenerePT.value = text;
-
-    let vigenereInfo = vigenereOutput.querySelector(".CeaserInfo");
-
-    vigenereInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Key: ${key}`;
-    VigenereOutputs.appendChild(vigenereOutput);
-    autoGrowTextArea(vigenerePT);
-
-    if (VigenereOutputs.dataset.hide === "true") {
-        vigenerePT.classList.add("HideExtraSiblings")
-        let lastChild = VigenereOutputs.lastElementChild;
-        lastChild.classList.add("HideExtraSiblings")
-    }
-
-
-    setStatus(VigenereStatus, false);
+    setStatus("Atbash", false);
 }
 
 
-function applyAffine(text, a, b, fitness, fitnessName) {
-    let affineOutput = ceaserOutputTemplate.content.cloneNode(true);
-    let affinePT = affineOutput.querySelector(".TextInputSmall");
-    affinePT.value = text;
+function applyMultipleCiphersOutput(cipherType, text, metaStringList) {
+    let CipherOutputs = document.getElementById(`${cipherType}Outputs`);
 
-    let affineInfo = affineOutput.querySelector(".CeaserInfo");
+    let cipherOutput = CipherMultipleOutputTemplate.content.cloneNode(true);
 
-    affineInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>A: ${a} | B: ${b}`;
-    AffineOutputs.appendChild(affineOutput);
-    autoGrowTextArea(affinePT);
+    let cipherPT = cipherOutput.querySelector(".TextInputSmall");
+    cipherPT.value = text;
 
-    if (AffineOutputs.dataset.hide === "true") {
-        affinePT.classList.add("HideExtraSiblings")
-        let lastChild = AffineOutputs.lastElementChild;
+    let cipherInfo = cipherOutput.querySelector(".CipherInfo");
+
+    cipherInfo.innerHTML = metaStringList.join("<br>");
+    CipherOutputs.appendChild(cipherOutput);
+    autoGrowTextArea(cipherPT);
+
+    if (CipherOutputs.dataset.hide === "true") {
+        cipherPT.classList.add("HideExtraSiblings")
+        let lastChild = CipherOutputs.lastElementChild;
         lastChild.classList.add("HideExtraSiblings")
     }
 
-    setStatus(AffineStatus, false);
-}
-
-
-function applySubstitution(text, key, fitness, fitnessName) {
-    let substitutionOutput = ceaserOutputTemplate.content.cloneNode(true);
-    let substitutionPT = substitutionOutput.querySelector(".TextInputSmall");
-    substitutionPT.value = text;
-
-    let substitutionInfo = substitutionOutput.querySelector(".CeaserInfo");
-
-    substitutionInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Key: ${key}`;
-    SubstitutionOutputs.appendChild(substitutionOutput);
-    autoGrowTextArea(substitutionPT);
-
-    if (SubstitutionOutputs.dataset.hide === "true") {
-        substitutionPT.classList.add("HideExtraSiblings")
-        let lastChild = SubstitutionOutputs.lastElementChild;
-        lastChild.classList.add("HideExtraSiblings")
-    }
-
-    setStatus(SubstitutionStatus, false);
-}
-
-
-function applyRailFence(text, rails, fitness, fitnessName) {
-    let railFenceOutput = ceaserOutputTemplate.content.cloneNode(true);
-    let railFencePT = railFenceOutput.querySelector(".TextInputSmall");
-    railFencePT.value = text;
-
-    let railFenceInfo = railFenceOutput.querySelector(".CeaserInfo");
-
-    railFenceInfo.innerHTML = `${fitnessName}: ${round(fitness, 6)}<br>Rails: ${rails}`;
-    RailFenceOutputs.appendChild(railFenceOutput);
-    autoGrowTextArea(railFencePT);
-
-    if (RailFenceOutputs.dataset.hide === "true") {
-        railFencePT.classList.add("HideExtraSiblings")
-        let lastChild = RailFenceOutputs.lastElementChild;
-        lastChild.classList.add("HideExtraSiblings")
-    }
-
-    setStatus(RailFenceStatus, false);
+    setStatus(cipherType, false);
 }
 
 
@@ -283,52 +192,58 @@ socket.on("result", function (data) {
     else if (resultType === "Ceaser") {
         CeaserOutputs.innerHTML = "";
         for(let i = 0; i < result.length; i++) {
-            const fitness = result[i]["fitness"];
+            const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
             const shift = result[i]["metadata"]["shift"];
 
-            applyCeaser(text, shift, fitness, data["fitnessName"]);
+            let metaDataList = [`${data["fitnessName"]}: ${fitness}`, `Shift: ${shift}`]
+            applyMultipleCiphersOutput("Ceaser", text, metaDataList)
         }
     }
     else if (resultType === "Vigenere") {
         VigenereOutputs.innerHTML = "";
         for(let i = 0; i < result.length; i++) {
-            const fitness = result[i]["fitness"];
+            const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
             const key = result[i]["metadata"]["key"];
 
-            applyVigenere(text, key, fitness, data["fitnessName"]);
+            let metaDataList = [`${data["fitnessName"]}: ${fitness}`, `Key: ${key}`]
+            applyMultipleCiphersOutput("Vigenere", text, metaDataList)
         }
     }
     else if (resultType === "Affine") {
         AffineOutputs.innerHTML = "";
         for(let i = 0; i < result.length; i++) {
-            const fitness = result[i]["fitness"];
+            const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
             const a = result[i]["metadata"]["a"];
             const b = result[i]["metadata"]["b"];
 
-            applyAffine(text, a, b, fitness, data["fitnessName"]);
+            let metaDataList = [`${data["fitnessName"]}: ${fitness}`, `A: ${a} | B: ${b}`]
+            applyMultipleCiphersOutput("Affine", text, metaDataList)
         }
     }
     else if (resultType === "Substitution") {
         SubstitutionOutputs.innerHTML = "";
         for(let i = 0; i < result.length; i++) {
-            const fitness = result[i]["fitness"];
+            const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
             const key = result[i]["metadata"]["key"];
 
-            applySubstitution(text, key, fitness, data["fitnessName"]);
+            let metaDataList = [`${data["fitnessName"]}: ${fitness}`, `Key: ${key}`]
+            applyMultipleCiphersOutput("Substitution", text, metaDataList)
         }
     }
     else if (resultType === "RailFence") {
         RailFenceOutputs.innerHTML = "";
         for(let i = 0; i < result.length; i++) {
-            const fitness = result[i]["fitness"];
+            const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
             const rail = result[i]["metadata"]["rail"];
+            const offset = result[i]["metadata"]["offset"];
 
-            applyRailFence(text, rail, fitness, data["fitnessName"]);
+            let metaDataList = [`${data["fitnessName"]}: ${fitness}`, `Rails: ${rail} | Offset: ${offset}`]
+            applyMultipleCiphersOutput("RailFence", text, metaDataList)
         }
     }
 })

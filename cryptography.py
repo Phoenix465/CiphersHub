@@ -2,6 +2,7 @@ from utils import CiphertextFitnessTracker
 import random
 import math
 
+
 alphas = "abcdefghijklmnopqrstuvwxyz".upper()
 reverseSubstitute = {a: b for a, b in zip(alphas, alphas[::-1])}
 alpha2Nums = {letter: i for i, letter in enumerate(alphas)}
@@ -44,32 +45,35 @@ def SubstituteText(text, nAlpha):
     return "".join(nAlpha[alpha2Nums[char]] for char in text)
 
 
-def RailFenceEncrypt(text, railLength, returnList=False):
-    text = "".join([c for c in text.upper() if c in alphas])
+def RailFenceEncrypt(text, railLength, railOffset, returnList=False, limitRails=True):
+    text = "-"*railOffset + "".join([c for c in text.upper() if c in alphas])
     railsRange = list(range(0, railLength))
 
-    rails = [""] * min(len(text), railLength)
+    rails = [""] * (min(len(text), railLength) if limitRails else railLength)
     rowsOrder = (railsRange + railsRange[-2:0:-1]) * math.ceil(len(text) / max(railLength, 2 * railLength - 2))
     for i, char in enumerate(text):
+        if char == "-": continue
         rails[rowsOrder[i]] += char
 
     return "".join(rails) if not returnList else rails
 
 
-def RailFenceDecrypt(text, railLength):
-    text = [c for c in text.upper() if c in alphas]
+def RailFenceDecrypt(text, railLength, railOffset):
+    # text = [c for c in text.upper() if c in alphas]
+    text = list(filter(lambda c: c in alphas, text.upper()))
 
-    length = len(text)
-    rails = RailFenceEncrypt("X"*len(text), railLength, returnList=True)
+    length = len(text) + railOffset
+    rails = RailFenceEncrypt("X"*length, railLength, 0, returnList=True)
 
-    textRails = [[text.pop(0) for placeholder in row] for row in rails]  # Empties text string
+    dummyOffsetsLength = [len(dummy) for dummy in RailFenceEncrypt("X"*railOffset, railLength, 0, returnList=True, limitRails=False)]
+    textRails = [["-"]*dummyOffsetsLength[i] + [text.pop(0) for placeholder in row[dummyOffsetsLength[i]:]] for i, row in enumerate(rails)]  # Empties text string
 
     railsRange = list(range(0, railLength))
     rowsOrder = (railsRange + railsRange[-2:0:-1]) * math.ceil(length / max(railLength, 2 * railLength - 2))
 
     plainText = [textRails[rowsOrder[i]].pop(0) for i in range(length)]
 
-    return "".join(plainText)
+    return "".join(plainText)[railOffset:]
 
 
 def CeaserSolver(text, fitnessFunc, num=1):
@@ -191,8 +195,20 @@ def RailFenceSolver(text, fitnessFunc, num=5):
         if i > len(text):
             break
 
-        ctext = RailFenceDecrypt(text, i)
-        tracker.add(ctext, metaData={"rail": i})
+        for offset in range(2*i):
+            # if i == 30 and offset==20:
+            #     from line_profiler import LineProfiler
+            #     def call(test):
+            #         RailFenceDecrypt(text, i, offset)
+            #
+            #     lp = LineProfiler()
+            #     lp.add_function(RailFenceDecrypt)  # add additional function to profile
+            #     lp_wrapper = lp(call)
+            #     lp_wrapper([i for i in range(100)])
+            #     lp.print_stats()
+
+            ctext = RailFenceDecrypt(text, i, offset)
+            tracker.add(ctext, metaData={"rail": i, "offset": offset})
 
     return tracker.get()
 
