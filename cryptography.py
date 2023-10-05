@@ -1,7 +1,7 @@
 from utils import CiphertextFitnessTracker
 import random
 import math
-
+import itertools
 
 alphas = "abcdefghijklmnopqrstuvwxyz".upper()
 reverseSubstitute = {a: b for a, b in zip(alphas, alphas[::-1])}
@@ -75,6 +75,43 @@ def RailFenceDecrypt(text, railLength, railOffset):
 
     return "".join(plainText)[railOffset:]
 
+
+# Write ROW Read COLUMN
+def TranspositionEncryptWRRC(text, order):
+    if len(order) != max(order) + 1:
+        raise Exception("Transposition Order Invalid Indices")
+
+    text = "".join(filter(lambda c: c in alphas , text.upper()))
+    keyL = len(order)
+
+    if len(text) % len(order) != 0:
+        raise Exception("Encryption Text of Invalid Shape")
+
+    keyOrder = list(sorted(range(keyL), key=lambda i: order[i]))
+
+    arrangedColumns = [text[index::keyL] for index in keyOrder]
+    return "".join(arrangedColumns)
+
+
+# Write COLUMN, Read ROW (Opposite WRRC)
+def TranspositionDecryptWCRR(text, order):
+    if len(order) != max(order) + 1:
+        raise Exception("Transposition Order Invalid Indices")
+
+    text = "".join(filter(lambda c: c in alphas, text.upper()))
+    keyL = len(order)
+
+    if len(text) % keyL != 0:
+        raise Exception("Decryption Text of Invalid Shape")
+
+    height = len(text) // keyL
+    arrangedColumns = [text[height*index:height*(index+1)] for index in order]
+    arrangeText = "".join(arrangedColumns)
+
+    return "".join([arrangeText[i::height] for i in range(height)])
+
+
+# ---- Solvers ----
 
 def CeaserSolver(text, fitnessFunc, num=1):
     tracker = CiphertextFitnessTracker(fitnessFunc=fitnessFunc, resultsTrack=num)
@@ -212,3 +249,26 @@ def RailFenceSolver(text, fitnessFunc, num=5):
 
     return tracker.get()
 
+
+def ColumnTranspositionWRWC(text, fitnessFunc, num=5):
+    tracker = CiphertextFitnessTracker(fitnessFunc=fitnessFunc, resultsTrack=num)
+    text = "".join(filter(lambda c: c in alphas, text.upper()))
+
+    for keyLength in range(2, 8):
+        if len(text) % keyLength != 0:
+            continue
+
+        bruteForceOrders = itertools.permutations(range(keyLength))
+
+        #S = time()
+        for newOrder in bruteForceOrders:
+            newText = TranspositionDecryptWCRR(text, newOrder)
+            tracker.add(newText, metaData={"order": newOrder})
+        #E = time()
+        #print("Time", round(E - S, 5))
+
+    return tracker.get()
+
+
+def HillCipherSolver(text, fitnessFunc, num=5):
+    pass

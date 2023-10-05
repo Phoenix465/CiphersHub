@@ -134,6 +134,21 @@
 		</div>
 
 		<div class="dotted-line"></div>
+		<div class="CipherStatusHolder">
+			<div class="CipherMiniTitle">Column Transposition<br>(Write Row Read Column)</div>
+			<div class="CipherStatusInfo" id="ColumnTranspositionStatus">READY</div>
+			<button class="CipherExpand" onclick="expandButtonClick(this, 'ColumnTranspositionOutputs')">+</button>
+		</div>
+		<div id="ColumnTranspositionOutputs" class="ParentInherit" data-hide="true">
+			<textarea type="text" class="TextInput" readonly oninput="autoGrowTextArea(this)"></textarea>
+			<div class="ValueBlockSmall">
+				<div class="ColumnTranspositionInfo">
+					NA: 0 | Order: NA
+				</div>
+			</div>
+		</div>
+
+		<div class="dotted-line"></div>
 	</div>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>

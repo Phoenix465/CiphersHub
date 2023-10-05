@@ -66,12 +66,14 @@ function reset() {
     resetOutput("Affine");
     resetOutput("Substitution");
     resetOutput("RailFence");
+    resetOutput("ColumnTransposition");
 
     applyMultipleCiphersOutput("Ceaser", "", [`Fitness: NA`, `Shift: NA`])
     applyMultipleCiphersOutput("Vigenere", "", [`Fitness: NA`, `Key: NA`])
     applyMultipleCiphersOutput("Affine", "", [`Fitness: NA`, `A: NA | B: NA`])
     applyMultipleCiphersOutput("Substitution", "", [`Fitness: NA`, `Key: NA`])
     applyMultipleCiphersOutput("RailFence", "", [`Fitness: NA`, `Rails: NA`])
+    applyMultipleCiphersOutput("ColumnTransposition", "", [`Fitness: NA`, `Order: NA`])
 }
 
 function compute() {
@@ -87,6 +89,7 @@ function compute() {
     setStatus("Affine", true);
     setStatus("Substitution", true);
     setStatus("RailFence", true);
+    setStatus("ColumnTransposition", true);
 
     socket.emit("requestFrequencyAnalysis", {ctext: text});
     socket.emit("requestIOC", {ctext: text});
@@ -96,6 +99,7 @@ function compute() {
     socket.emit("requestAffine", {ctext: text});
     socket.emit("requestSubstitution", {ctext: text});
     socket.emit("requestRailFence", {ctext: text});
+    socket.emit("requestColumnTransposition", {ctext: text});
 }
 function applyFrequencyAnalysis(keysSort, frequency) {
     frequencyLetters.innerHTML = ""
@@ -190,7 +194,7 @@ socket.on("result", function (data) {
         applyAtbash(plaintext, fitness, fitnessName);
     }
     else if (resultType === "Ceaser") {
-        CeaserOutputs.innerHTML = "";
+        resetOutput("Ceaser");
         for(let i = 0; i < result.length; i++) {
             const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
@@ -201,7 +205,7 @@ socket.on("result", function (data) {
         }
     }
     else if (resultType === "Vigenere") {
-        VigenereOutputs.innerHTML = "";
+        resetOutput("Vigenere");
         for(let i = 0; i < result.length; i++) {
             const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
@@ -212,7 +216,7 @@ socket.on("result", function (data) {
         }
     }
     else if (resultType === "Affine") {
-        AffineOutputs.innerHTML = "";
+        resetOutput("Affine");
         for(let i = 0; i < result.length; i++) {
             const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
@@ -224,7 +228,7 @@ socket.on("result", function (data) {
         }
     }
     else if (resultType === "Substitution") {
-        SubstitutionOutputs.innerHTML = "";
+        resetOutput("Substitution");
         for(let i = 0; i < result.length; i++) {
             const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
@@ -235,7 +239,7 @@ socket.on("result", function (data) {
         }
     }
     else if (resultType === "RailFence") {
-        RailFenceOutputs.innerHTML = "";
+        resetOutput("RailFence");
         for(let i = 0; i < result.length; i++) {
             const fitness = round(result[i]["fitness"], 6);
             const text = result[i]["text"];
@@ -244,6 +248,23 @@ socket.on("result", function (data) {
 
             let metaDataList = [`${data["fitnessName"]}: ${fitness}`, `Rails: ${rail} | Offset: ${offset}`]
             applyMultipleCiphersOutput("RailFence", text, metaDataList)
+        }
+    }
+    else if (resultType === "ColumnTransposition") {
+        resetOutput("ColumnTransposition");
+        for(let i = 0; i < result.length; i++) {
+            const fitness = round(result[i]["fitness"], 6);
+            const text = result[i]["text"];
+            const order = result[i]["metadata"]["order"];
+
+            let metaDataList = [`${data["fitnessName"]}: ${fitness}`, `Order: ${order}`]
+            applyMultipleCiphersOutput("ColumnTransposition", text, metaDataList)
+        }
+
+        if (result.length === 0) {
+            setStatus("ColumnTransposition", false);
+            resetOutput("ColumnTransposition");
+            applyMultipleCiphersOutput("ColumnTransposition", "", [`Fitness: NA`, `Order: NA`])
         }
     }
 })

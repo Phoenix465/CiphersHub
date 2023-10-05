@@ -146,6 +146,19 @@ def requestRailFence(data):
         })
 
 
+@socketio.on("requestColumnTransposition")
+def requestColumnTransposition(data):
+    if "ctext" in data:
+        text = data["ctext"]
+        results = cryptography.ColumnTranspositionWRWC(text, fitnessFunc=fitnessFunc, num=5)
+
+        emit("result", {
+            "type": "ColumnTransposition",
+            "result": results,
+            "fitnessName": fitnessFuncName,
+        })
+
+
 if __name__ == "__main__":
     extraDirs = [r'.\static', r'.\templates']
     extraFiles = extraDirs[:]
